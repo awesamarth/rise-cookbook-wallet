@@ -7,6 +7,7 @@ import { parseEther, parseUnits, formatUnits, encodeFunctionData } from "viem";
 import { useReadContract, useChainId, useConnection } from "wagmi";
 import { STK, COUNTER, BURN_ADDRESS, erc20Abi, counterAbi } from "@/constants";
 
+//storing p256 private key in localStorage
 function storageKey(address: string) {
   return `simple_cookbook_${address}_session_key`;
 }
@@ -25,8 +26,6 @@ export default function SessionPage() {
   const grantPermissions = Hooks.useGrantPermissions();
   const revokePermissions = Hooks.useRevokePermissions();
   const { data: permissions, refetch: refetchPermissions } = Hooks.usePermissions();
-
-  console.log("permissions", permissions);
 
   // find the on-chain permission that matches our stored session key
   const activePermission = permissions?.find(
