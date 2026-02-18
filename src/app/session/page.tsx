@@ -34,6 +34,10 @@ export default function SessionPage() {
   const hasSession = !!activePermission && !!sessionPrivateKey;
 
   useEffect(() => {
+    console.log("status:", status);
+  }, [status]);
+
+  useEffect(() => {
     console.log("permissions", permissions);
   }, [permissions]);
 
