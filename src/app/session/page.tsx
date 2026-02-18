@@ -37,14 +37,16 @@ export default function SessionPage() {
     console.log("[status/connector]", "status:", status, "connector uid:", connector?.uid, "connector.getProvider:", !!connector?.getProvider);
   }, [status, connector]);
 
+
+
   useEffect(() => {
-    if (status === 'connected') {
+    if (status === 'connected' && connector) {
       console.log("refetching permissions")
       refetchPermissions();
-      
+      const t = setTimeout(() => refetchPermissions(), 500);
+      return () => clearTimeout(t);
     }
-  }, [status]);
-
+  }, [status, connector]);
 
   useEffect(() => {
     console.log("[sessionPrivateKey]", !!sessionPrivateKey, "[sessionPublicKey]", !!sessionPublicKey);
