@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { createWalletClient, custom, parseEther, formatUnits, encodeFunctionData } from "viem";
 import { Chains } from "rise-wallet";
 import { useReadContract, useConnection } from "wagmi";
@@ -8,7 +8,10 @@ import { STK, COUNTER, BURN_ADDRESS, erc20Abi, counterAbi } from "@/constants";
 
 export default function PasskeyPage() {
   const { address, connector } = useConnection();
+  const [mounted, setMounted] = useState(false);
   const [pendingAction, setPendingAction] = useState<string | null>(null);
+
+  useEffect(() => setMounted(true), []);
   const [txHash, setTxHash] = useState<string | null>(null);
 
   
@@ -66,6 +69,16 @@ export default function PasskeyPage() {
     data: encodeFunctionData({ abi: counterAbi, functionName: "increment", args: [] }),
   }]).then(() => refetchCount());
 
+  if (!mounted) return null;
+
+  if (!connector) {
+    return (
+      <div className="flex items-center justify-center bg-zinc-50 dark:bg-black" style={{ height: "calc(100vh - 56px)" }}>
+        <p className="text-zinc-500 text-base">Please connect your RISE Wallet to continue.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-center justify-center bg-zinc-50 dark:bg-black" style={{ height: "calc(100vh - 56px)" }}>
       <div className="flex flex-col items-center gap-8 w-full max-w-lg px-6">
@@ -96,21 +109,21 @@ export default function PasskeyPage() {
         <div className="w-full flex flex-col gap-3">
           <button
             onClick={handleMint}
-            disabled={pendingAction === "mint"}
+            disabled={!connector || pendingAction === "mint"}
             className="w-full rounded-full bg-[#4ade80] h-14 text-lg text-black font-semibold hover:bg-[#22c55e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {pendingAction === "mint" ? "..." : "Mint 1000 STK"}
           </button>
           <button
             onClick={handleSpend}
-            disabled={pendingAction === "spend"}
+            disabled={!connector || pendingAction === "spend"}
             className="w-full rounded-full border border-zinc-700 bg-zinc-800 h-14 text-lg text-zinc-200 font-semibold hover:border-zinc-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {pendingAction === "spend" ? "..." : "Spend 5 STK"}
           </button>
           <button
             onClick={handleIncrement}
-            disabled={pendingAction === "increment"}
+            disabled={!connector || pendingAction === "increment"}
             className="w-full rounded-full border border-zinc-700 bg-zinc-800 h-14 text-lg text-zinc-200 font-semibold hover:border-zinc-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {pendingAction === "increment" ? "..." : "Increment Counter"}

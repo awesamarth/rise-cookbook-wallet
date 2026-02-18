@@ -33,6 +33,10 @@ export default function SessionPage() {
   );
   const hasSession = !!activePermission && !!sessionPrivateKey;
 
+  useEffect(() => {
+    console.log("permissions", permissions);
+  }, [permissions]);
+
   // load from localStorage once mounted
   useEffect(() => {
     setMounted(true);
@@ -69,6 +73,7 @@ export default function SessionPage() {
 
     // grant on-chain permissions for this public key with allowed calls + spend limits
     await grantPermissions.mutateAsync({
+      connector,
       key: { publicKey, type: "p256" },
       expiry: Math.floor(Date.now() / 1000) + 86400, // current time + 86400 seconds (1 day)
       feeToken: null,
@@ -97,7 +102,7 @@ export default function SessionPage() {
   // revokes the session key on-chain and clears it from localStorage
   const revokeSession = async () => {
     if (!activePermission) return;
-    await revokePermissions.mutateAsync({ id: activePermission.id });
+    await revokePermissions.mutateAsync({ connector, id: activePermission.id });
     localStorage.removeItem(storageKey(address!));
     setSessionPrivateKey(null);
     setSessionPublicKey(null);
@@ -175,6 +180,14 @@ export default function SessionPage() {
 
   if (!mounted) return null;
 
+  if (!connector) {
+    return (
+      <div className="flex items-center justify-center bg-zinc-50 dark:bg-black" style={{ height: "calc(100vh - 56px)" }}>
+        <p className="text-zinc-500 text-base">Please connect your RISE Wallet to continue.</p>
+      </div>
+    );
+  }
+
   if (!hasSession) {
     return (
       <div className="flex items-center justify-center bg-zinc-50 dark:bg-black" style={{ height: "calc(100vh - 56px)" }}>
@@ -187,7 +200,7 @@ export default function SessionPage() {
           </div>
           <button
             onClick={createSession}
-            disabled={grantPermissions.isPending}
+            disabled={grantPermissions.isPending || !connector}
             className="rounded-full bg-[#4ade80] px-8 h-14 text-lg text-black font-semibold hover:bg-[#22c55e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {grantPermissions.isPending ? "Creating..." : "Create Session Key"}
