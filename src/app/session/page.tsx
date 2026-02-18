@@ -34,12 +34,22 @@ export default function SessionPage() {
   const hasSession = !!activePermission && !!sessionPrivateKey;
 
   useEffect(() => {
-    console.log("status:", status);
-  }, [status]);
+    console.log("[status/connector]", "status:", status, "connector uid:", connector?.uid, "connector.getProvider:", !!connector?.getProvider);
+  }, [status, connector]);
 
   useEffect(() => {
-    console.log("permissions", permissions);
+    console.log("[permissions]", permissions);
   }, [permissions]);
+
+  useEffect(() => {
+    console.log("[address]", address);
+  }, [address]);
+
+  useEffect(() => {
+    console.log("[sessionPrivateKey]", !!sessionPrivateKey, "[sessionPublicKey]", !!sessionPublicKey);
+  }, [sessionPrivateKey, sessionPublicKey]);
+
+  console.log("[render] status:", status, "address:", address, "permissions:", permissions, "hasSession:", hasSession);
 
   // load from localStorage once mounted
   useEffect(() => {
