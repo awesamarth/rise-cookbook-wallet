@@ -38,6 +38,10 @@ export default function SessionPage() {
   }, [status, connector]);
 
   useEffect(() => {
+    if (status === 'connected') refetchPermissions();
+  }, [status]);
+
+  useEffect(() => {
     console.log("[permissions]", permissions);
   }, [permissions]);
 
