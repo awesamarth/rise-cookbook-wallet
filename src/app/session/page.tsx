@@ -38,16 +38,13 @@ export default function SessionPage() {
   }, [status, connector]);
 
   useEffect(() => {
-    if (status === 'connected') refetchPermissions();
+    if (status === 'connected') {
+      console.log("refetching permissions")
+      refetchPermissions();
+      
+    }
   }, [status]);
 
-  useEffect(() => {
-    console.log("[permissions]", permissions);
-  }, [permissions]);
-
-  useEffect(() => {
-    console.log("[address]", address);
-  }, [address]);
 
   useEffect(() => {
     console.log("[sessionPrivateKey]", !!sessionPrivateKey, "[sessionPublicKey]", !!sessionPublicKey);
@@ -58,7 +55,7 @@ export default function SessionPage() {
   // load from localStorage once mounted
   useEffect(() => {
     setMounted(true);
-    console.log("running address useeffect")
+    console.log("running address useEffect")
     if (!address) return;
     const pk = localStorage.getItem(storageKey(address));
     if (pk) {
@@ -197,7 +194,7 @@ export default function SessionPage() {
   }]).then(() => refetchCount());
 
 
-  if (!mounted || status !== 'connected') return null;
+  if (!mounted) return null;
 
   if (!connector) {
     return (
