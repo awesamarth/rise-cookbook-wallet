@@ -13,7 +13,7 @@ function storageKey(address: string) {
 }
 
 export default function SessionPage() {
-  const { address, connector } = useConnection();
+  const { address, connector, status } = useConnection();
   const chainId = useChainId();
   const [mounted, setMounted] = useState(false);
   const [pendingAction, setPendingAction] = useState<string | null>(null);
@@ -178,7 +178,7 @@ export default function SessionPage() {
   }]).then(() => refetchCount());
 
 
-  if (!mounted) return null;
+  if (!mounted || status !== 'connected') return null;
 
   if (!connector) {
     return (
