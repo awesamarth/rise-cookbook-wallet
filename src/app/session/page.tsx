@@ -54,6 +54,7 @@ export default function SessionPage() {
   // load from localStorage once mounted
   useEffect(() => {
     setMounted(true);
+    console.log("running address useeffect")
     if (!address) return;
     const pk = localStorage.getItem(storageKey(address));
     if (pk) {
