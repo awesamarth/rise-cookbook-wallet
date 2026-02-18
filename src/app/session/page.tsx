@@ -43,8 +43,6 @@ export default function SessionPage() {
     if (status === 'connected' && connector) {
       console.log("refetching permissions")
       refetchPermissions();
-      const t = setTimeout(() => refetchPermissions(), 500);
-      return () => clearTimeout(t);
     }
   }, [status, connector]);
 
@@ -54,9 +52,10 @@ export default function SessionPage() {
 
   console.log("[render] status:", status, "address:", address, "permissions:", permissions, "hasSession:", hasSession);
 
+  useEffect(() => { setMounted(true); }, []);
+
   // load from localStorage once mounted
   useEffect(() => {
-    setMounted(true);
     console.log("running address useEffect")
     if (!address) return;
     const pk = localStorage.getItem(storageKey(address));
